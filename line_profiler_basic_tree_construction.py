@@ -2,7 +2,7 @@ import numpy as np
 
 import line_profiler
 
-from tbs.stage_maxime import BinaryMixedTree, s_0
+from tbs.binary_hypergraph import BinaryMixedTree, s_0
 from tbs.graph import MixedGraph
 
 func_test = BinaryMixedTree.basic_tree_construction

@@ -1,7 +1,7 @@
 import unittest
 
-from tbs.stage_maxime._algo1_functions import s_0, random_subset
-from tbs.stage_maxime._mixed_tree import BinaryMixedTree
+from tbs.binary_hypergraph._algo1_functions import s_0, random_subset
+from tbs.binary_hypergraph._mixed_tree import BinaryMixedTree
 from tbs.graph import MixedGraph, DIRECTED_EDGE, UNDIRECTED_EDGE
 
 

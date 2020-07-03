@@ -4,7 +4,7 @@ import random
 
 from tbs.graph import MixedGraph, UNDIRECTED_EDGE, DIRECTED_EDGE
 from tbs.graph import Graph
-from tbs.stage_maxime._algo1_functions import s_0, random_subset, directed_neighborhood_random_tree
+from tbs.binary_hypergraph._algo1_functions import s_0, random_subset, directed_neighborhood_random_tree
 
 
 class BinaryMixedTree(MixedGraph):
@@ -32,15 +32,6 @@ class BinaryMixedTree(MixedGraph):
     def add_directed(self, x, y):
         self.update(DIRECTED_EDGE, [(x, y)])
 
-    def remove_undirected(self, x, y):
-        self.difference([(x, y)])
-
-    def remove_directed(self, x, y):
-        self.difference([(x, y)])
-
-    def get_edge(self):
-        return list(self.edges[0])[0]
-
     def add_union(self, x, y):
         xy = x.union(y)
 
@@ -51,15 +42,6 @@ class BinaryMixedTree(MixedGraph):
 
         return xy
 
-    def get_other_successor_or_none(self, x, successor):
-        if len(self(x, undirected=False, begin=True, end=False)) < 2:
-            return None
-        else:
-            other, s2 = self(x, undirected=False, begin=True, end=False)
-            if other == successor:
-                other = s2
-            return other
-
     def move_undirected_from_to(self, x, y, edges=None):
         if edges is None:
             edges = set(self(x, undirected=True, begin=False, end=False))
@@ -67,31 +49,6 @@ class BinaryMixedTree(MixedGraph):
         for z in edges:
             self.difference([(x, z)])
             self.update(UNDIRECTED_EDGE, [(y, z)])
-
-    def move_directed_from_to(self, x, y, edges=None):
-        if edges is None:
-            edges = set(self(x, undirected=False, begin=False, end=True))
-
-        for z in edges:
-            self.difference([(z, x)])
-            self.update(DIRECTED_EDGE, [(z, y)])
-
-    def to_graph(self):
-        tree = Graph(self.vertices,
-                     ((vertex, neighbour) for vertex in self
-                      for neighbour in self(vertex, undirected=True, begin=True, end=True)))
-        return tree
-
-    def find_root_as_undirected(self):
-
-        pruned_tree = self.to_graph()
-
-        while len(pruned_tree) > 2:
-            leaves = [vertex for vertex in pruned_tree if len(pruned_tree(vertex)) == 1]
-            for leaf in leaves:
-                pruned_tree.remove(leaf)
-        possible_roots = [root for root in pruned_tree]  # 1 or 2 possibilities
-        return random.choice(possible_roots)
 
     def edge_choice(self):
         verify_line2 = []
