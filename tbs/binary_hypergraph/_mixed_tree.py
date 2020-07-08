@@ -4,7 +4,8 @@ import random
 
 from tbs.graph import MixedGraph, UNDIRECTED_EDGE, DIRECTED_EDGE
 from tbs.graph import Graph
-from tbs.binary_hypergraph._algo1_functions import s_0, random_subset, directed_neighborhood_random_tree
+from tbs.binary_hypergraph._algo1_functions import s_0, random_subset, directed_neighborhood_random_tree, supremum, \
+    minimum
 
 
 class BinaryMixedTree(MixedGraph):
@@ -50,7 +51,7 @@ class BinaryMixedTree(MixedGraph):
             self.difference([(x, z)])
             self.update(UNDIRECTED_EDGE, [(y, z)])
 
-    def edge_choice(self):
+    def edge_choice_for_algo1(self):
         verify_line2 = []
         undirected, directed = self.edges
         for edge in undirected:
@@ -67,12 +68,12 @@ class BinaryMixedTree(MixedGraph):
             k = random.randint(0, len(verify_line2) - 1)
             return verify_line2[k]
 
-    def basic_tree_construction(self, map):
+    def basic_tree_construction(self, map_S):
         """ Algorithm 1: Returns a mixed tree T_i+1 and a map S_i+1 constructed from a mixed tree T_i and a map S_i.
         We assume here that the tree `self` is *consistent*.
 
         Args:
-            map (dict): function r:X ->2^X where `X` is the set of vertices of the mixed tree `self`
+            map_S (dict): function r:X ->2^X where `X` is the set of vertices of the mixed tree `self`
 
         Returns:
             next_mixed_tree (BinaryMixedTree): the next mixed tree
@@ -82,9 +83,9 @@ class BinaryMixedTree(MixedGraph):
             ValueError: if the condition of line 2 can't be satisfied (which means the mixed tree isn't consistent)
         """
         next_mixed_tree = self.copy()
-        next_map = dict(map)
+        next_map = dict(map_S)
 
-        x, y = next_mixed_tree.edge_choice()
+        x, y = next_mixed_tree.edge_choice_for_algo1()
         v_xy = next_mixed_tree.add_union(x, y)
         next_map[v_xy] = next_map[x].union(next_map[y])
 
@@ -117,3 +118,95 @@ class BinaryMixedTree(MixedGraph):
             seq.append((mixed_tree, map))
 
         return seq
+
+    def kruskal(self):
+        connected_parts = set()
+        for v in self.vertices:
+            connected_parts.add(v)
+
+        for edge in self.edges:
+            for x, y in edge:
+                s1, s2 = frozenset(), frozenset()
+
+                for s in connected_parts:
+                    if x.intersection(s) != frozenset():
+                        s1 = s
+
+                    if y.intersection(s) != frozenset():
+                        s2 = s
+
+                connected_parts.remove(s1)
+                connected_parts.remove(s2)
+                connected_parts.add(s1.union(s2))
+
+        return connected_parts
+
+    def homogeneous_subset(self, first_iter=True):
+        if first_iter:
+            h = self.copy()
+        else:
+            h = self
+
+        undirected, directed = h.edges
+
+        if len(directed) == 0:
+            return h.vertices
+
+        else:
+            xy = next(iter(directed))
+            x, y = xy
+            h.difference([xy])
+            connected_1, connected_2 = h.kruskal()
+
+            if y.intersection(connected_1) != frozenset():
+                for v in connected_1:
+                    h.remove(frozenset([v]))
+            else:
+                for v in connected_2:
+                    h.remove(frozenset([v]))
+
+            return h.homogeneous_subset(first_iter=False)
+
+    def edges_in_homogeneous_subset(self, A):
+        undirected, directed = self.edges
+        out = []
+
+        for x, y in undirected:
+            if x in A:
+                out.append(frozenset([x, y]))
+
+        return out
+
+    def edge_choice_for_algo3(self, maps, tb_graph_edges):
+        homogeneous_set = self.homogeneous_subset()
+        edges_list = self.edges_in_homogeneous_subset(homogeneous_set)
+
+        sups = dict()
+        for i, (x, y) in enumerate(edges_list):
+            sup = supremum(maps[x], maps[y], tb_graph_edges)
+
+            if sup not in sups.keys():
+                sups[sup] = {i}
+            else:
+                sups[sup].add(i)
+
+        m = minimum(list(sups.keys()))
+
+        return edges_list[sups[m].pop()]
+
+    def basic_tree_construction_algo3(self, map_S, edge_choice):
+        """Compute the algorithm 1 and 3:
+
+        """
+        next_mixed_tree = self.copy()
+        next_map = dict(map_S)
+
+        # x, y = next_mixed_tree.edge_choice()
+        # v_xy = next_mixed_tree.add_union(x, y)
+        # next_map[v_xy] = next_map[x].union(next_map[y])
+
+
+if __name__ == '__main__':
+    liste = [(1, 2), (2, 3), (3, 4)]
+    for i, x, y in enumerate(liste):
+        print(i, (x, y))

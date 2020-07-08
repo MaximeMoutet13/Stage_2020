@@ -11,6 +11,8 @@ Module content
 
 from ._mixed_tree import BinaryMixedTree
 from ._algo1_functions import s_0, random_subset, directed_neighborhood_random_tree
+from ._hypergraph import HyperGraph
 
 __author__ = "maxime"
 
+__all__ = ['BinaryMixedTree']
