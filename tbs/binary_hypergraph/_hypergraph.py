@@ -1,8 +1,11 @@
-from tbs.graph import Graph
+from tbs.graph import Graph, connected_parts
 
 
 class HyperGraph:
-    def __init__(self, vertices=tuple(), hyper_edges=frozenset()):
+    """Class for hypergraph where an hyperedge is a subset of the vertices set.
+    """
+
+    def __init__(self, vertices=frozenset(), hyper_edges=frozenset()):
         self._vertices = frozenset()
         self._hyper_edges = frozenset()
 
@@ -39,7 +42,7 @@ class HyperGraph:
     def add_edge(self, edge):
         if edge in self.hyper_edges:
             raise ValueError("Already a hyperedge")
-        self._hyper_edges = self._hyper_edges.union(edge)
+        self._hyper_edges = self._hyper_edges.union([edge])
 
     def remove(self, x):
         """Remove vertex *x*.
@@ -90,7 +93,7 @@ class HyperGraph:
     def __eq__(self, g):
         """Same vertices, same egdes and same attribute for each edge."""
 
-        return self.vertices == g.vertices and self._edges == g._edges
+        return self.vertices == g.vertices and self.hyper_edges == g.hyper_edges
 
     def __ne__(self, g):
         """not ==."""
@@ -108,10 +111,38 @@ class HyperGraph:
         for hyper_edge in self.hyper_edges:
             if frozenset(hyper_edge.intersection(vertices_set)) in tb_graph_restrict_to_set.hyper_edges:
                 continue
+            elif frozenset() == frozenset(hyper_edge.intersection(vertices_set)):
+                continue
             else:
                 tb_graph_restrict_to_set.add_edge(frozenset(hyper_edge.intersection(vertices_set)))
 
         return tb_graph_restrict_to_set
 
     def support_tree(self):
+        v = self.vertices
+        h_edges = list(self.hyper_edges)
 
+        h_edges.sort(key=lambda x: len(x))
+        support_tree = Graph()
+
+        for x in v:
+            support_tree.add(x)
+
+        for h_edge in h_edges:
+            kruskal = list(connected_parts(support_tree, vertex_subset=h_edge))
+            if len(kruskal) == 1:
+                continue
+            else:
+                for i in range(len(kruskal) - 1):
+                    support_tree.update([(next(iter(kruskal[i])), next(iter(kruskal[i + 1])))],
+                                        node_creation=False)
+
+        return support_tree
+
+    def hypergraph_restriction(self, vertices_set):
+        tb_graph_restrict_to_set = HyperGraph(vertices=vertices_set)
+
+        for hyper_edge in self.hyper_edges:
+            tb_graph_restrict_to_set.add_edge(hyper_edge.intersection(vertices_set))
+
+        return tb_graph_restrict_to_set
