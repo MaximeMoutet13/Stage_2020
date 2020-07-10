@@ -83,13 +83,6 @@ class HyperGraph:
 
         return self
 
-    def __nonzero__(self):
-        """False if no vertex."""
-
-        if self._vertices:
-            return True
-        return False
-
     def __eq__(self, g):
         """Same vertices, same egdes and same attribute for each edge."""
 
@@ -106,6 +99,14 @@ class HyperGraph:
         return vertex in self.vertices
 
     def restriction(self, vertices_set):
+        """Restrict a hypergraph to a given vertices set
+
+        Args:
+            vertices_set (frozenset)
+
+        Returns:
+            tb_graph_restrict_to_set (HyperGraph): the restricted hypergraph
+        """
         tb_graph_restrict_to_set = HyperGraph(vertices_set)
 
         for hyper_edge in self.hyper_edges:
@@ -119,6 +120,10 @@ class HyperGraph:
         return tb_graph_restrict_to_set
 
     def support_tree(self):
+        """Construct the support tree of the hypergraph self (assume self is a hypertree)
+
+        Returns (Graph): a graph which is a support tree of self
+        """
         v = self.vertices
         h_edges = list(self.hyper_edges)
 
@@ -138,11 +143,3 @@ class HyperGraph:
                                         node_creation=False)
 
         return support_tree
-
-    def hypergraph_restriction(self, vertices_set):
-        tb_graph_restrict_to_set = HyperGraph(vertices=vertices_set)
-
-        for hyper_edge in self.hyper_edges:
-            tb_graph_restrict_to_set.add_edge(hyper_edge.intersection(vertices_set))
-
-        return tb_graph_restrict_to_set

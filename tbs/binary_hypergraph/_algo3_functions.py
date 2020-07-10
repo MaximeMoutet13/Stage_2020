@@ -35,13 +35,17 @@ def edges_in_homogeneous_subset(mixed_tree, A):
     return out
 
 
-def edge_choice_for_algo3(mixed_tree, maps, tb_hypergraph):
+def edge_choice_for_algo3(algo3):
+    mixed_tree = algo3.mixed_tree
+    maps = algo3.maps
+    tb_hypergraph = algo3.tb_hypergraph
+
     homogeneous_set = mixed_tree.homogeneous_subset()
     edges_list = edges_in_homogeneous_subset(mixed_tree, homogeneous_set)
 
     sups = dict()
     for i, (x, y) in enumerate(edges_list):
-        sup = supremum(maps[x], maps[y], tb_hypergraph)
+        sup = supremum(maps[x], maps[y], tb_hypergraph.hyper_edges)
 
         if sup not in sups.keys():
             sups[sup] = {i}
@@ -53,7 +57,23 @@ def edge_choice_for_algo3(mixed_tree, maps, tb_hypergraph):
     return edges_list[sups[m].pop()]
 
 
-def neighborhood_support_tree_edges(mixed_tree, vertex, map_S, tb_hypergraph):
+def delta_z_subset_algo3(algo3, delta_z, v_xy, z):
+    next_map = algo3.maps
+    tb_hypergraph = algo3.tb_hypergraph
+
+    delta_z_2 = set()
+    for t in delta_z:
+        if next_map[v_xy].issubset(supremum(next_map[z], next_map[t], tb_hypergraph.hyper_edges)):
+            delta_z_2.add(t)
+
+    return delta_z_2
+
+
+def neighborhood_support_tree_edges(algo3, vertex):
+    mixed_tree = algo3.mixed_tree
+    map_S = algo3.maps
+    tb_hypergraph = algo3.tb_hypergraph
+
     A = set()
     delta_plus = mixed_tree(vertex, undirected=False, begin=True, end=False, closed=False)
     for t in delta_plus:
@@ -70,8 +90,6 @@ def neighborhood_support_tree_edges(mixed_tree, vertex, map_S, tb_hypergraph):
 
     e_delta = frozenset()
     for x, y in neighborhood_support_tree.edges:
-        e_delta.union(frozenset([s[x], s[y]]))
+        e_delta.union([frozenset([s[x], s[y]])])
 
     return e_delta
-
-

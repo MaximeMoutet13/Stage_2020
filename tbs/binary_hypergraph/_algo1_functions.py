@@ -22,7 +22,9 @@ def random_subset(intial_set):
     return subset
 
 
-def edge_choice_for_algo1(mixed_tree):
+def edge_choice_for_algo1(algo3):
+    mixed_tree = algo3.mixed_tree
+
     verify_line2 = []
     undirected, directed = mixed_tree.edges
     for edge in undirected:
@@ -38,6 +40,10 @@ def edge_choice_for_algo1(mixed_tree):
     else:
         k = randint(0, len(verify_line2) - 1)
         return verify_line2[k]
+
+
+def delta_z_subset_algo1(algo3, delta_z, v_xy, z):
+    return random_subset(delta_z)
 
 
 def directed_neighborhood_random_tree_edges(mixed_tree, vertex):

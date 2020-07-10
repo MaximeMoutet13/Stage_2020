@@ -4,12 +4,17 @@ from tbs.graph import UNDIRECTED_EDGE
 
 
 def basic_tree_construction_algo3(consistent_mixed_tree, map_S, tb_hypergraph):
-    """Compute the algorithm 3:
+    """Algorithm 3: from a consistent tree T, a map S and totally balanced hypergraph H,
+     returns a consistent tree T' and a map S'
 
     Args:
         consistent_mixed_tree (BinaryMixedTree): a consistent mixed tree
         map_S (dict): the maps for the consistent mixed tree
         tb_hypergraph (HyperGraph): a totally balanced hypergraph
+
+    Returns:
+        next_mixed_tree (BinaryMixedTree): the next consistent mixed tree
+        next_map (dict): the next map
     """
     next_mixed_tree = consistent_mixed_tree.copy()
     next_map = dict(map_S)
@@ -32,10 +37,10 @@ def basic_tree_construction_algo3(consistent_mixed_tree, map_S, tb_hypergraph):
             A = set()
             delta_plus = next_mixed_tree(z, undirected=False, begin=True, end=False, closed=False)
             for t in delta_plus:
-                A.update(map_S[t].difference(map_S[z]))
+                A.update(next_map[t].difference(next_map[z]))
 
             neighborhood_support_tree = tb_hypergraph.restriction(A).support_tree()
-            next_mixed_tree.update(UNDIRECTED_EDGE, neighborhood_support_tree.edges[0], node_creation=False)
+            next_mixed_tree.update(UNDIRECTED_EDGE, neighborhood_support_tree.edges, node_creation=False)
             next_mixed_tree.remove(z)
 
     return next_mixed_tree, next_map

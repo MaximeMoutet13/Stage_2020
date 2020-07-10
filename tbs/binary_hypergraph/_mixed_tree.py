@@ -75,28 +75,27 @@ class BinaryMixedTree(MixedGraph):
         g = Graph.from_graph(self)
         return g
 
-    def homogeneous_subset(self, first_iter=True):
-        if first_iter:
-            h = self.copy()
-        else:
-            h = self
+    def homogeneous_subset(self):
+        def homogeneous_subset_rec(h):
+            undirected, directed = h.edges
 
-        undirected, directed = h.edges
+            if len(directed) == 0:
+                return h.vertices
 
-        if len(directed) == 0:
-            return h.vertices
-
-        else:
-            xy = next(iter(directed))
-            x, y = xy
-            h.difference([xy])
-            connected_1, connected_2 = connected_parts(h.underlying_undirected_graph())
-
-            if connected_1.intersection([y]) != frozenset():
-                for v in connected_1:
-                    h.remove(v)
             else:
-                for v in connected_2:
-                    h.remove(v)
+                xy = next(iter(directed))
+                x, y = xy
+                h.difference([xy])
+                connected_1, connected_2 = connected_parts(h.underlying_undirected_graph())
 
-            return h.homogeneous_subset(first_iter=False)
+                if connected_1.intersection([y]) != frozenset():
+                    for v in connected_1:
+                        h.remove(v)
+                else:
+                    for v in connected_2:
+                        h.remove(v)
+
+                return h.homogeneous_subset()
+
+        h = self.copy()
+        return homogeneous_subset_rec(h)
