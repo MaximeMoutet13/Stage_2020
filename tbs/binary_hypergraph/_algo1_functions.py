@@ -4,6 +4,14 @@ from tbs.graph import random_tree
 
 
 def s_0(mixed_tree):
+    """The map for the initial mixed tree, which is the identity function.
+
+    Args:
+        mixed_tree (BinaryMixedTree): a consistent mixed tree
+
+    Returns:
+        identity_func (dict)
+    """
     identity_func = dict()
 
     for vertex in mixed_tree:
@@ -46,7 +54,8 @@ def delta_z_subset_algo1(algo3, delta_z, v_xy, z):
     return random_subset(delta_z)
 
 
-def directed_neighborhood_random_tree_edges(mixed_tree, vertex):
+def directed_neighborhood_random_tree_edges(algo3, vertex):
+    mixed_tree = algo3.mixed_tree
     delta_plus = mixed_tree(vertex, undirected=False, begin=True, end=False, closed=False)
     tree = random_tree(list(delta_plus))
     return tree.edges

@@ -1,9 +1,7 @@
 import unittest
 
 from tbs.binary_hypergraph._algo1_functions import random_subset, edge_choice_for_algo1
-from tbs.binary_hypergraph._mixed_tree import BinaryMixedTree
-from tbs.binary_hypergraph._basic_tree_construction import BasicTreeConstruction
-from tbs.graph import MixedGraph, DIRECTED_EDGE
+from tbs.binary_hypergraph import BinaryMixedTree, BasicTreeConstruction, MixedGraph, DIRECTED_EDGE
 
 
 class TestEdgeChoice1(unittest.TestCase):

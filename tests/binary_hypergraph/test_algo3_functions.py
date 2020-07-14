@@ -1,7 +1,8 @@
 import unittest
 
-from tbs.binary_hypergraph import supremum, minimum, delta_z_subset_algo3, edge_choice_for_algo3, \
-    edges_in_homogeneous_subset, BasicTreeConstruction, HyperGraph, BinaryMixedTree, MixedGraph, s_0
+from tbs.binary_hypergraph import BasicTreeConstruction, HyperGraph, BinaryMixedTree, MixedGraph, s_0
+from tbs.binary_hypergraph._algo3_functions import supremum, minimum, delta_z_subset_algo3, edge_choice_for_algo3, \
+    edges_in_homogeneous_subset, line_14, line_16
 
 
 class TestSets(unittest.TestCase):
@@ -34,9 +35,6 @@ class TestSets(unittest.TestCase):
         self.assertEqual(value, expected)
 
     def test_minimum(self):
-        s = frozenset(
-            [frozenset([frozenset([0]), frozenset([1])]), frozenset([frozenset([1])]), frozenset([frozenset([0])
-                                                                                                  ])])
         sets = [frozenset([0]), frozenset([1])]
 
         value = minimum(sets)
@@ -45,17 +43,6 @@ class TestSets(unittest.TestCase):
         self.assertEqual(value, expected)
 
     def test_minimum_2(self):
-        s = frozenset([
-            frozenset([frozenset([0])]),
-            frozenset([frozenset([1])]),
-            frozenset([frozenset([2])]),
-            frozenset([frozenset([3])]),
-            frozenset([frozenset([0]), frozenset([1])]),
-            frozenset([frozenset([2]), frozenset([3])]),
-            frozenset([frozenset([0]), frozenset([1]), frozenset([3])]),
-            frozenset([frozenset([0]), frozenset([1]), frozenset([2]), frozenset([3])])
-        ])
-
         sets = [frozenset([frozenset([0]), frozenset([1]), frozenset([2])]),
                 frozenset([frozenset([2]), frozenset([3])])]
 
@@ -182,8 +169,71 @@ class TestDeltaZSubset(unittest.TestCase):
         t.add_directed(frozenset([1]), frozenset([2]))
         t.add_directed(frozenset([3]), frozenset([4]))
 
-
         expected = {frozenset([5])}
         value = delta_z_subset_algo3(BasicTreeConstruction(t, s, g), frozenset([frozenset([5])]),
                                      frozenset([1, 3]), frozenset([1]))
         self.assertEqual(expected, value)
+
+
+class TestTree(unittest.TestCase):
+    def test_A_set(self):
+        t = BinaryMixedTree(MixedGraph({1, 2, 3}))
+        t.add(frozenset([1, 3]))
+        t.add_directed(frozenset([1]), frozenset([2]))
+        t.add_directed(frozenset([1]), frozenset([1, 3]))
+
+        s = s_0(t)
+        s[frozenset([1, 3])] = {frozenset([3]), frozenset([1])}
+
+        delta_plus = t(frozenset([1]), undirected=False, begin=True, end=False, closed=False)
+        A = line_14(delta_plus, s, frozenset([1]))
+
+        self.assertEqual(A, {frozenset([2]), frozenset([3])})
+
+    def test_A_set_2(self):
+        t = BinaryMixedTree(MixedGraph({1, 2, 3, 4, 5, 6}, [(3, 6)]))
+        t.add(frozenset([1, 3]))
+        t.add_directed(frozenset([1]), frozenset([2]))
+        t.add_directed(frozenset([3]), frozenset([4]))
+        t.add_directed(frozenset([1]), frozenset([1, 3]))
+        t.add_undirected(frozenset([1, 3]), frozenset([5]))
+
+        s = s_0(t)
+        s[frozenset([1, 3])] = {frozenset([1]), frozenset([3])}
+        delta_plus = t(frozenset([1]), undirected=False, begin=True, end=False, closed=False)
+        A = line_14(delta_plus, s, frozenset([1]))
+
+        self.assertEqual(A, {frozenset([2]), frozenset([3])})
+
+    def test_line_16(self):
+        t = BinaryMixedTree(MixedGraph({1, 2, 3}))
+        t.add(frozenset([1, 3]))
+        t.add_directed(frozenset([1]), frozenset([2]))
+        t.add_directed(frozenset([1]), frozenset([1, 3]))
+
+        s = s_0(t)
+        s[frozenset([1, 3])] = {frozenset([3]), frozenset([1])}
+
+        delta_plus = t(frozenset([1]), undirected=False, begin=True, end=False, closed=False)
+        A = line_14(delta_plus, s, frozenset([1]))
+
+        dict_s = line_16(A, delta_plus, s)
+
+        self.assertEqual(dict_s, {frozenset([2]): frozenset([2]), frozenset([3]): frozenset([1, 3])})
+
+    def test_line_16_2(self):
+        t = BinaryMixedTree(MixedGraph({1, 2, 3, 4, 5, 6}, [(3, 6)]))
+        t.add(frozenset([1, 3]))
+        t.add_directed(frozenset([1]), frozenset([2]))
+        t.add_directed(frozenset([3]), frozenset([4]))
+        t.add_directed(frozenset([1]), frozenset([1, 3]))
+        t.add_undirected(frozenset([1, 3]), frozenset([5]))
+
+        s = s_0(t)
+        s[frozenset([1, 3])] = {frozenset([1]), frozenset([3])}
+        delta_plus = t(frozenset([1]), undirected=False, begin=True, end=False, closed=False)
+        A = line_14(delta_plus, s, frozenset([1]))
+
+        dict_s = line_16(A, delta_plus, s)
+
+        self.assertEqual(dict_s, {frozenset([2]): frozenset([2]), frozenset([3]): frozenset([1, 3])})

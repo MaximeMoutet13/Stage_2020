@@ -1,7 +1,7 @@
 import unittest
 
 from tbs.binary_hypergraph import BinaryMixedTree
-from tbs.graph import MixedGraph, DIRECTED_EDGE, UNDIRECTED_EDGE, Graph
+from tbs.graph import MixedGraph, DIRECTED_EDGE, Graph
 
 
 class TestUnion(unittest.TestCase):

@@ -2,12 +2,29 @@ from tbs.binary_hypergraph import BinaryMixedTree, HyperGraph, UNDIRECTED_EDGE, 
 
 
 class BasicTreeConstruction(object):
+    """Class for the algorithms 1-4.
+    """
+
     def __init__(self, mixed_tree=BinaryMixedTree, maps=dict, tb_hypergraph=HyperGraph):
         self.mixed_tree = mixed_tree
         self.maps = maps
         self.tb_hypergraph = tb_hypergraph
 
     def step(self, strategy):
+        """ Returns a mixed tree T_i+1 and a map S_i+1 constructed from a mixed tree T_i and a map S_i.
+            We assume here that the given tree `self.mixed_tree` is *consistent*. Depending on the given strategy,
+            the algorithm 1 or 3 will be computed.
+
+            Args:
+                strategy: a list of the functions needed, depending on which algorithm we want to execute (1 or 3)
+
+            Returns:
+                next_mixed_tree (BinaryMixedTree): the next mixed tree
+                next_map (dict): its associated map
+
+            Raises:
+                ValueError: if the condition of line 2 of algorithm 1 can't be satisfied (which means the mixed tree isn't consistent)
+            """
         edge_choice, delta_z_subset, neighborhood_tree = strategy()
 
         next_mixed_tree = self.mixed_tree.copy()
@@ -25,13 +42,23 @@ class BasicTreeConstruction(object):
             next_mixed_tree.move_undirected_from_to(z, v_xy, delta_z_random_subset)
 
             if delta_z == delta_z_random_subset:
-                random_delta_z_tree_edges = neighborhood_tree(next_mixed_tree, z)
+                random_delta_z_tree_edges = neighborhood_tree(next_algo3, z)
                 next_mixed_tree.update(UNDIRECTED_EDGE, random_delta_z_tree_edges, node_creation=False)
                 next_mixed_tree.remove(z)
 
         return next_mixed_tree, next_map
 
     def tree_sequence(self, strategy):
+        """Create a sequence of mixed trees with associated maps. Depending on the given strategy,
+            the algorithm 2 or 4 will be computed. The given tree `self.mixed_tree` must be *consistent*
+            and have only *undirected* edges.
+
+            Args:
+                strategy: a list of the functions needed, depending on which algorithm we want to execute (2 or 4)
+
+            Returns:
+                seq (list): a sequence ((T_0, S_0), ..., (T_i, S_i)...) of mixed trees and there maps
+            """
         current_tree = self.mixed_tree
         current_map = s_0(current_tree)
 

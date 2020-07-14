@@ -40,6 +40,14 @@ class TestHyperGraph(unittest.TestCase):
             frozenset([frozenset([2])])
         ]))
 
+    def test_restriction_2(self):
+        h = HyperGraph(frozenset([frozenset([1]), frozenset([2])]), frozenset(
+            [frozenset([frozenset([1])]), frozenset([frozenset([2]), frozenset([frozenset([1]), frozenset([2])])])]))
+
+        value = h.restriction(frozenset([frozenset([1])]))
+
+        self.assertEqual(HyperGraph(frozenset([frozenset([1])]), frozenset([frozenset([frozenset([1])])])), value)
+
     def test_support_tree_2_vertices_graph(self):
         g = HyperGraph(frozenset([frozenset([1]), frozenset([2])]),
                        frozenset([frozenset([frozenset([1]), frozenset([2])])]))

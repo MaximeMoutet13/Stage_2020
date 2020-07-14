@@ -120,7 +120,7 @@ class HyperGraph:
         return tb_graph_restrict_to_set
 
     def support_tree(self):
-        """Construct the support tree of the hypergraph self (assume self is a hypertree)
+        """Construct the support tree of the hypergraph self (assume self is a *hypertree*)
 
         Returns (Graph): a graph which is a support tree of self
         """

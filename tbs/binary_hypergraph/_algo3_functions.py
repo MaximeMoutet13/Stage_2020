@@ -69,27 +69,45 @@ def delta_z_subset_algo3(algo3, delta_z, v_xy, z):
     return delta_z_2
 
 
+def line_14(delta_plus, map_S, vertex):
+    A = set()
+
+    for t in delta_plus:
+        A.update(map_S[t].difference(map_S[vertex]))
+
+    return A
+
+
+def line_16(A, delta_plus, map_S):
+    s = dict()
+    for alpha in A:
+        for u in delta_plus:
+
+            if alpha in map_S[u]:
+                s[alpha] = u
+                continue
+    return s
+
+
+def e_delta(support_tree, s):
+    e_delta = frozenset()
+
+    for x, y in support_tree.edges:
+        e_delta = e_delta.union([frozenset([s[x], s[y]])])
+
+    return e_delta
+
+
 def neighborhood_support_tree_edges(algo3, vertex):
     mixed_tree = algo3.mixed_tree
     map_S = algo3.maps
     tb_hypergraph = algo3.tb_hypergraph
 
-    A = set()
     delta_plus = mixed_tree(vertex, undirected=False, begin=True, end=False, closed=False)
-    for t in delta_plus:
-        A.update(map_S[t].difference(map_S[vertex]))
+    A = line_14(delta_plus, map_S, vertex)
 
     neighborhood_support_tree = tb_hypergraph.restriction(A).support_tree()
 
-    s = dict()
-    for alpha in A:
-        for u in delta_plus:
-            if alpha in map_S[u]:
-                s[alpha] = u
-                continue
+    s = line_16(A, delta_plus, map_S)
 
-    e_delta = frozenset()
-    for x, y in neighborhood_support_tree.edges:
-        e_delta.union([frozenset([s[x], s[y]])])
-
-    return e_delta
+    return e_delta(neighborhood_support_tree, s)
