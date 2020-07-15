@@ -2,7 +2,7 @@ from tbs.graph import Graph, connected_parts
 
 
 class HyperGraph:
-    """Class for hypergraph where an hyperedge is a subset of the vertices set.
+    """Class for hypergraphs where a hyperedge is a subset of the vertices set.
     """
 
     def __init__(self, vertices=frozenset(), hyper_edges=frozenset()):
@@ -40,63 +40,22 @@ class HyperGraph:
         self._vertices = self._vertices.union([x])
 
     def add_edge(self, edge):
+        """Add hyperedge *edge*.
+
+        Args:
+            edge(hashable): new hyperedge to add
+        Raises:
+            ValueError: if *edge* is already a hyperedge.
+        """
         if edge in self.hyper_edges:
             raise ValueError("Already a hyperedge")
         self._hyper_edges = self._hyper_edges.union([edge])
 
-    def remove(self, x):
-        """Remove vertex *x*.
-
-        Args:
-            x: a vertex
-
-        Raises:
-            :exc:`ValueError` if *x* is not a vertex.
-        """
-
-        if x not in self.vertices:
-            raise ValueError("Not a vertex")
-
-        self._vertices = self._vertices.difference([x])
-
-        for edge in self.hyper_edges:
-            edge.difference({x})
-
-    def difference(self, edges):
-        """Remove edges.
-
-        Each edge in *edges* is removed from the graph.
-
-        Args:
-            edges(iterable): Each edge is a pair `(x, y)` where *x* != *y* are vertices (in *vertices* or not).
-
-        Returns:
-            self (for possible chaining).
-        """
-
-        for x in edges:
-            if not x.issubset(self.vertices):
-                continue
-
-            if x in self.hyper_edges:
-                self.hyper_edges.difference(x)
-
-        return self
-
     def __eq__(self, g):
-        """Same vertices, same egdes and same attribute for each edge."""
-
         return self.vertices == g.vertices and self.hyper_edges == g.hyper_edges
 
     def __ne__(self, g):
-        """not ==."""
-
         return not self == g
-
-    def __contains__(self, vertex):
-        """is a vertex"""
-
-        return vertex in self.vertices
 
     def restriction(self, vertices_set):
         """Restrict a hypergraph to a given vertices set
@@ -120,9 +79,9 @@ class HyperGraph:
         return tb_graph_restrict_to_set
 
     def support_tree(self):
-        """Construct the support tree of the hypergraph self (assume self is a *hypertree*)
+        """Construct the support tree of the hypergraph `self` (assume `self` is a *hypertree*)
 
-        Returns (Graph): a graph which is a support tree of self
+        Returns (Graph): a graph which is a *support tree* of `self`
         """
         v = self.vertices
         h_edges = list(self.hyper_edges)
