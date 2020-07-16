@@ -90,12 +90,12 @@ def line_16(A, delta_plus, map_S):
 
 
 def e_delta(support_tree, s):
-    e_delta = frozenset()
+    edges_delta = frozenset()
 
     for x, y in support_tree.edges:
-        e_delta = e_delta.union([frozenset([s[x], s[y]])])
+        edges_delta = edges_delta.union([frozenset([s[x], s[y]])])
 
-    return e_delta
+    return edges_delta
 
 
 def neighborhood_support_tree_edges(algo3, vertex):

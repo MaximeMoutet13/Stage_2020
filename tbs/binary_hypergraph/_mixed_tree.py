@@ -1,12 +1,12 @@
 __author__ = 'cchatel', 'fbrucker', 'mmoutet'
 
-
 from tbs.graph import MixedGraph, UNDIRECTED_EDGE, DIRECTED_EDGE, Graph, connected_parts
 
 
 class BinaryMixedTree(MixedGraph):
     """Class for mixed trees (trees with directed and undirected edges).
     """
+
     def __init__(self, tree):
         super().__init__()
         for vertex in tree:

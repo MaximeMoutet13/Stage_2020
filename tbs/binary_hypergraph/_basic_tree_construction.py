@@ -1,16 +1,16 @@
-from tbs.binary_hypergraph import BinaryMixedTree, HyperGraph, UNDIRECTED_EDGE, s_0
+from tbs.binary_hypergraph import BinaryMixedTree, HyperGraph, UNDIRECTED_EDGE, s_0, MixedGraph, strategy_algo1
 
 
 class BasicTreeConstruction(object):
     """Class for the algorithms 1-4.
     """
 
-    def __init__(self, mixed_tree=BinaryMixedTree, maps=dict, tb_hypergraph=HyperGraph):
+    def __init__(self, mixed_tree=BinaryMixedTree(MixedGraph()), maps=dict(), tb_hypergraph=HyperGraph()):
         self.mixed_tree = mixed_tree
         self.maps = maps
         self.tb_hypergraph = tb_hypergraph
 
-    def step(self, strategy):
+    def step(self, strategy=strategy_algo1):
         """ Returns a mixed tree T_i+1 and a map S_i+1 constructed from a mixed tree T_i and a map S_i.
             We assume here that the given tree `self.mixed_tree` is *consistent*. Depending on the given strategy,
             the algorithm 1 or 3 will be computed.
@@ -39,16 +39,18 @@ class BasicTreeConstruction(object):
         for z in {x, y}:
             delta_z = next_mixed_tree(z, undirected=True, begin=False, end=False, closed=False)
             delta_z_random_subset = delta_z_subset(next_algo3, delta_z, v_xy, z)
+
             next_mixed_tree.move_undirected_from_to(z, v_xy, delta_z_random_subset)
 
             if delta_z == delta_z_random_subset:
                 random_delta_z_tree_edges = neighborhood_tree(next_algo3, z)
+
                 next_mixed_tree.update(UNDIRECTED_EDGE, random_delta_z_tree_edges, node_creation=False)
                 next_mixed_tree.remove(z)
 
         return next_mixed_tree, next_map
 
-    def tree_sequence(self, strategy):
+    def tree_sequence(self, strategy=strategy_algo1):
         """Create a sequence of mixed trees with associated maps. Depending on the given strategy,
             the algorithm 2 or 4 will be computed. The given tree `self.mixed_tree` must be *consistent*
             and have only *undirected* edges.
