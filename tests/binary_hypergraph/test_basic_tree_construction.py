@@ -1,7 +1,7 @@
 import unittest
 
-from tbs.binary_hypergraph import s_0, BinaryMixedTree, MixedGraph, DIRECTED_EDGE, strategy_algo1, HyperGraph, \
-    BasicTreeConstruction, strategy_algo3
+from tbs.binary_hypergraph import s_0, BinaryMixedTree, MixedGraph, DIRECTED_EDGE, HyperGraph, \
+    BasicTreeConstruction, StratAlgo1, StratAlgo3
 
 
 class TestLoop(unittest.TestCase):
@@ -37,7 +37,7 @@ class TestAlgo1(unittest.TestCase):
         g = BinaryMixedTree(MixedGraph({0, 1, 2}, [(0, 1)]))
         g.add_directed(frozenset([1]), frozenset([2]))
 
-        value_graph_2, value_map_2 = BasicTreeConstruction(g, s_0(g)).step(strategy_algo1)
+        value_graph_2, value_map_2 = BasicTreeConstruction(g, s_0(g)).step(StratAlgo1())
 
         expected_graph = BinaryMixedTree(MixedGraph({2}))
         expected_graph.add(frozenset([0, 1]))
@@ -63,7 +63,7 @@ class TestAlgo1(unittest.TestCase):
             }
              )
         ]
-        value = BasicTreeConstruction(g, s_0(g)).tree_sequence(strategy_algo1)
+        value = BasicTreeConstruction(g, s_0(g)).tree_sequence(StratAlgo1())
 
         self.assertEqual(value, expected)
 
@@ -83,7 +83,7 @@ class TestAlgo3(unittest.TestCase):
 
         maps = s_0(t)
 
-        next_tree, next_map = BasicTreeConstruction(t, maps, h).step(strategy_algo3)
+        next_tree, next_map = BasicTreeConstruction(t, maps, h).step(StratAlgo3())
 
         self.assertEqual(
             {frozenset([1]): {frozenset([1])}, frozenset([2]): {frozenset([2])}, frozenset([3]): {frozenset([3])},
@@ -111,7 +111,7 @@ class TestAlgo3(unittest.TestCase):
         t.add_directed(frozenset([1]), frozenset([2]))
         t.add_directed(frozenset([3]), frozenset([4]))
 
-        next_tree, next_map = BasicTreeConstruction(t, s_0(t), g).step(strategy_algo3)
+        next_tree, next_map = BasicTreeConstruction(t, s_0(t), g).step(StratAlgo3())
 
         self.assertEqual({frozenset([1]): {frozenset([1])},
                           frozenset([2]): {frozenset([2])},

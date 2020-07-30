@@ -50,10 +50,6 @@ def edge_choice_for_algo1(algo3):
         return verify_line2[k]
 
 
-def delta_z_subset_algo1(algo3, delta_z, v_xy, z):
-    return random_subset(delta_z)
-
-
 def directed_neighborhood_random_tree_edges(algo3, vertex):
     mixed_tree = algo3.mixed_tree
     delta_plus = mixed_tree(vertex, undirected=False, begin=True, end=False, closed=False)
